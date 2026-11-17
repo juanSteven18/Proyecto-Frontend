@@ -1,0 +1,60 @@
+<%- include('../partials/header') %>
+
+<main class="main-content">
+
+    <!-- Hero Section / Banner Principal -->
+    <section class="hero-banner">
+        <div class="hero-text-box">
+            <span class="badge-envio">ENVÍO RÁPIDO 🔥</span>
+            <h1>¿Hambre?<br>Pídelo <span>ahora.</span></h1>
+            <p>Las mejores hamburguesas y platos directo a tu mesa. Fresco, rápido y delicioso.</p>
+            <a href="#menu-ancla" class="btn-ver-menu">Ver Menú ↓</a>
+        </div>
+        <div class="hero-image-box">
+            <div class="circulo-decorativo">
+                <img src="/img/hero-burger.jpg" alt="Hamburguesa destacada Bite&Go">
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección del Menú Dinámico -->
+    <section id="menu-ancla" class="menu-container">
+        <h2>Nuestro Menú</h2>
+
+        <!-- Navegación de Categorías (Filtros) -->
+        <div class="categorias-nav">
+            <button class="filtro-btn activo" data-filter="todos">Todos</button>
+            <% categorias.forEach(cat => { %>
+                <button class="filtro-btn" data-filter="<%= cat.id %>"><%= cat.nombre %></button>
+            <% }) %>
+        </div>
+
+        <!-- Cuadrícula de Tarjetas de Productos -->
+        <div class="productos-grid">
+            <% productos.forEach(prod => { %>
+                <article class="tarjeta-producto" data-category="<%= prod.categoria_id %>">
+                    <figure>
+                        <span class="badge-tipo"><%= prod.Categoria ? prod.Categoria.nombre : 'Especialidad' %></span>
+                        <img src="<%= prod.imagen_url %>" alt="<%= prod.nombre %>" loading="lazy">
+                    </figure>
+                    <div class="tarjeta-cuerpo">
+                        <div class="titulo-precio-row">
+                            <h3><%= prod.nombre %></h3>
+                            <span class="precio-etiqueta">$<%= prod.precio.toFixed(2) %></span>
+                        </div>
+                        <p class="descripcion-prod"><%= prod.descripcion %></p>
+                        <button class="btn-anadir-carrito" 
+                                data-id="<%= prod.id %>" 
+                                data-nombre="<%= prod.nombre %>" 
+                                data-precio="<%= prod.precio %>">
+                            + Añadir
+                        </button>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+    </section>
+
+</main>
+
+<%- include('../partials/footer') %>
