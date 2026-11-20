@@ -1,0 +1,55 @@
+<%- include('../partials/header') %>
+
+<main class="menu-container" style="margin-top: 2rem;">
+    <h2>Cola de Pedidos en Espera (Orden de llegada)</h2>
+
+    <% if (pedidos.length === 0) { %>
+        <p class="carrito-vacio">No hay pedidos pendientes en la cola en este momento.</p>
+    <% } else { %>
+        <div class="cola-lista">
+            <% pedidos.forEach((pedido, index) => { %>
+                <article class="tarjeta-pedido">
+                    <div class="pedido-cabecera">
+                        <div>
+                            <span class="turno-fifo">#<%= index + 1 %> en cola</span>
+                            <strong><%= pedido.codigo_comprobante %></strong>
+                            <span>· Mesa: <b><%= pedido.numero_mesa %></b></span>
+                        </div>
+                        <span class="estado-badge estado-<%= pedido.estado %>"><%= pedido.estado.toUpperCase() %></span>
+                    </div>
+
+                    <p class="pedido-meta">
+                        <b>Atendió:</b> <%= pedido.mesero_nombre %> ·
+                        <b>Hora entrada:</b> <%= new Date(pedido.createdAt).toLocaleTimeString('es-VE') %>
+                    </p>
+
+                    <% if (pedido.notas) { %>
+                        <p class="pedido-notas"><b>Detalles:</b> <%= pedido.notas %></p>
+                    <% } %>
+
+                    <ul class="pedido-items">
+                        <% pedido.detalles.forEach(det => { %>
+                            <li><%= det.cantidad %>x <%= det.producto ? det.producto.nombre : 'Producto' %> ($<%= det.subtotal.toFixed(2) %>)</li>
+                        <% }) %>
+                    </ul>
+
+                    <div class="pedido-pie">
+                        <strong>Total: $<%= pedido.total.toFixed(2) %></strong>
+                        <div class="acciones-estado">
+                            <form action="/panel/pedidos/<%= pedido.id %>/estado" method="POST">
+                                <input type="hidden" name="nuevoEstado" value="entregado">
+                                <button type="submit" class="btn-entregado">Marcar Entregado</button>
+                            </form>
+                            <form action="/panel/pedidos/<%= pedido.id %>/estado" method="POST">
+                                <input type="hidden" name="nuevoEstado" value="cancelado">
+                                <button type="submit" class="btn-cancelar">Cancelar</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+    <% } %>
+</main>
+
+<%- include('../partials/footer') %>

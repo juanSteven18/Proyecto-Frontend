@@ -1,60 +1,164 @@
 <%- include('../partials/header') %>
 
-<main class="main-content">
+    <main class="main-content">
 
-    <!-- Hero Section / Banner Principal -->
-    <section class="hero-banner">
-        <div class="hero-text-box">
-            <span class="badge-envio">ENVÍO RÁPIDO 🔥</span>
-            <h1>¿Hambre?<br>Pídelo <span>ahora.</span></h1>
-            <p>Las mejores hamburguesas y platos directo a tu mesa. Fresco, rápido y delicioso.</p>
-            <a href="#menu-ancla" class="btn-ver-menu">Ver Menú ↓</a>
-        </div>
-        <div class="hero-image-box">
-            <div class="circulo-decorativo">
-                <img src="/img/hero-burger.jpg" alt="Hamburguesa destacada Bite&Go">
+        <!-- Hero Section / Banner Principal -->
+        <section class="hero-banner">
+            <div class="hero-text-box">
+                <span class="badge-envio">ENVÍO RÁPIDO 🔥</span>
+                <h1>¿Hambre?<br>Pídelo <span>ahora.</span></h1>
+                <p>Las mejores hamburguesas y platos directo a tu mesa. Fresco, rápido y delicioso.</p>
+                <a href="#menu-ancla" class="btn-ver-menu">Ver Menú ↓</a>
             </div>
-        </div>
-    </section>
+            <div class="hero-image-box">
+                <div class="circulo-decorativo">
+                    <img src="/img/ham.webp" alt="Hamburguesa destacada Bite&Go">
+                </div>
+            </div>
+        </section>
 
-    <!-- Sección del Menú Dinámico -->
-    <section id="menu-ancla" class="menu-container">
-        <h2>Nuestro Menú</h2>
+        <% const destacados = productos.filter(p => p.destacado); %>
+        <% if (destacados.length > 0) { %>
+        <section class="destacados-section" aria-label="Platillos destacados">
+            <div class="destacados-header">
+                <h2>Destacados del Turno</h2>
+                <div class="carrusel-controles">
+                    <button type="button" id="btn-carrusel-prev" class="btn-carrusel" aria-label="Anterior">←</button>
+                    <button type="button" id="btn-carrusel-next" class="btn-carrusel" aria-label="Siguiente">→</button>
+                </div>
+            </div>
 
-        <!-- Navegación de Categorías (Filtros) -->
-        <div class="categorias-nav">
-            <button class="filtro-btn activo" data-filter="todos">Todos</button>
-            <% categorias.forEach(cat => { %>
-                <button class="filtro-btn" data-filter="<%= cat.id %>"><%= cat.nombre %></button>
-            <% }) %>
-        </div>
-
-        <!-- Cuadrícula de Tarjetas de Productos -->
-        <div class="productos-grid">
-            <% productos.forEach(prod => { %>
-                <article class="tarjeta-producto" data-category="<%= prod.categoria_id %>">
-                    <figure>
-                        <span class="badge-tipo"><%= prod.Categoria ? prod.Categoria.nombre : 'Especialidad' %></span>
-                        <img src="<%= prod.imagen_url %>" alt="<%= prod.nombre %>" loading="lazy">
-                    </figure>
-                    <div class="tarjeta-cuerpo">
-                        <div class="titulo-precio-row">
-                            <h3><%= prod.nombre %></h3>
-                            <span class="precio-etiqueta">$<%= prod.precio.toFixed(2) %></span>
-                        </div>
-                        <p class="descripcion-prod"><%= prod.descripcion %></p>
-                        <button class="btn-anadir-carrito" 
-                                data-id="<%= prod.id %>" 
-                                data-nombre="<%= prod.nombre %>" 
+            <div id="carrusel-track" class="carrusel-track">
+                <% destacados.forEach(prod => { %>
+                    <article class="tarjeta-producto carrusel-slide">
+                        <figure>
+                            <span class="badge-tipo">⭐ Destacado</span>
+                            <img
+                                src="<%= prod.imagen_url || '/img/ham.webp' %>"
+                                alt="<%= prod.nombre %>"
+                                onerror="this.onerror=null; this.src='/img/ham.webp';"
+                            >
+                        </figure>
+                        <div class="tarjeta-cuerpo">
+                            <div class="titulo-precio-row">
+                                <h3><%= prod.nombre %></h3>
+                                <span class="precio-etiqueta">$<%= Number(prod.precio).toFixed(2) %></span>
+                            </div>
+                            <p class="descripcion-prod"><%= prod.descripcion %></p>
+                            <button
+                                type="button"
+                                class="btn-anadir-carrito"
+                                data-id="<%= prod.id %>"
+                                data-nombre="<%= prod.nombre %>"
                                 data-precio="<%= prod.precio %>">
-                            + Añadir
-                        </button>
+                                + Añadir
+                            </button>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        </section>
+        <% } %>
+
+        <!-- Sección del Menú Dinámico -->
+        <section id="menu-ancla" class="menu-container">
+            <h2>Nuestro Menú</h2>
+
+            <!-- Navegación de Categorías (Filtros) -->
+            <div class="categorias-nav">
+                <button class="filtro-btn activo" data-filter="todos">Todos</button>
+                <% categorias.forEach(cat => { %>
+                    <button class="filtro-btn" data-filter="<%= cat.id %>">
+                        <%= cat.nombre %>
+                    </button>
+                <% }) %>
+            </div>
+
+            <!-- Cuadrícula de Tarjetas de Productos -->
+            <div class="productos-grid">
+                <% productos.forEach(prod => { %>
+                    <article class="tarjeta-producto" data-category="<%= prod.categoria_id %>">
+                        <figure>
+                            <span class="badge-tipo">
+                                <%= prod.Categoria ? prod.Categoria.nombre : 'Especialidad' %>
+                            </span>
+                            <img
+                                src="<%= prod.imagen_url || '/img/ham.webp' %>"
+                                alt="<%= prod.nombre %>"
+                                onerror="this.onerror=null; this.src='/img/ham.webp';"
+                            >
+                        </figure>
+                        <div class="tarjeta-cuerpo">
+                            <div class="titulo-precio-row">
+                                <h3>
+                                    <%= prod.nombre %>
+                                </h3>
+                                <span class="precio-etiqueta">$<%= Number(prod.precio).toFixed(2) %></span>
+                            </div>
+                            <p class="descripcion-prod">
+                                <%= prod.descripcion %>
+                            </p>
+                            <button
+                                class="btn-anadir-carrito"
+                                data-id="<%= prod.id %>"
+                                data-nombre="<%= prod.nombre %>"
+                                data-precio="<%= prod.precio %>">
+                                + Añadir
+                            </button>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        </section>
+
+        <!-- Panel Carrito -->
+        <aside id="panel-carrito" class="panel-carrito oculto" aria-label="Tu Pedido">
+            <div class="panel-carrito-header">
+                <h3>Tu Pedido</h3>
+                <button type="button" id="btn-cerrar-carrito" class="btn-cerrar">✕</button>
+            </div>
+
+            <div id="carrito-items" class="carrito-items">
+                <p class="carrito-vacio">Aún no has añadido platillos.</p>
+            </div>
+
+            <form id="form-pedido" class="form-pedido">
+                <div class="campo-grupo">
+                    <label for="numero-mesa">Número de mesa</label>
+                    <input type="text" id="numero-mesa" name="numero_mesa" placeholder="Ej. Mesa 3" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="mesero-nombre">Atendido por (Mesero/a)</label>
+                    <input type="text" id="mesero-nombre" name="mesero_nombre" placeholder="Ej. Carlos Pérez" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="notas-pedido">Detalles / Comentarios</label>
+                    <textarea id="notas-pedido" name="notas" rows="2"
+                        placeholder="Ej. Una hamburguesa sin cebolla..."></textarea>
+                </div>
+
+                <div class="resumen-totales">
+                    <div class="fila-total">
+                        <span>Subtotal</span>
+                        <span id="carrito-subtotal">$0.00</span>
                     </div>
-                </article>
-            <% }) %>
-        </div>
-    </section>
+                    <div class="fila-total">
+                        <span>IVA (16%)</span>
+                        <span id="carrito-iva">$0.00</span>
+                    </div>
+                    <div class="fila-total total-final">
+                        <span>Total</span>
+                        <span id="carrito-total">$0.00</span>
+                    </div>
+                </div>
 
-</main>
+                <button type="submit" id="btn-procesar-pedido" class="btn-procesar">Enviar a cola →</button>
+            </form>
+        </aside>
+        <div id="backdrop-carrito" class="backdrop-carrito oculto"></div>
 
-<%- include('../partials/footer') %>
+    </main>
+
+    <%- include('../partials/footer') %>
