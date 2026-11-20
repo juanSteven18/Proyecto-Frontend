@@ -8,11 +8,11 @@ async function ejecutarSeed() {
         console.log('Base de datos recreada para datos de prueba.');
 
         // 1. Crear usuarios de prueba (Admin y Empleado)
-        const passAdmin = await bcrypt.hash('admin123', 10);
-        const passEmp = await bcrypt.hash('emp123', 10);
+        const passAdmin = await bcrypt.hash('123', 10);
+        const passEmp = await bcrypt.hash('123', 10);
 
         await Usuario.bulkCreate([
-            { nombre: 'Administrador General', username: 'admin', password: passAdmin, rol: 'admin' },
+            { nombre: 'Administrador General', username: 'supervisor', password: passAdmin, rol: 'supervisor' },
             { nombre: 'Empleado de Cocina', username: 'empleado', password: passEmp, rol: 'empleado' }
         ]);
 
@@ -34,6 +34,7 @@ async function ejecutarSeed() {
                 descripcion: 'Carne 150g, queso cheddar fundido, lechuga, tomate y salsa de la casa.', 
                 precio: 8.50, 
                 stock: 20, 
+                imagen_url: '/img/ham.webp',
                 destacado: true, 
                 categoria_id: catBurgers.id 
             },
@@ -42,6 +43,7 @@ async function ejecutarSeed() {
                 descripcion: 'Doble carne, doble cheddar, tiras de tocineta crujiente y cebolla caramelizada.', 
                 precio: 12.00, 
                 stock: 12, 
+                imagen_url: '/img/hamburguesa-con-tocino.jpg',
                 destacado: true, 
                 categoria_id: catBurgers.id 
             },
@@ -50,6 +52,7 @@ async function ejecutarSeed() {
                 descripcion: 'Porción de papas crujientes sazonadas con sal y especias.', 
                 precio: 3.50, 
                 stock: 30, 
+                imagen_url: '/img/papas.jpg',
                 destacado: false, 
                 categoria_id: catBebidas.id 
             },
@@ -58,6 +61,7 @@ async function ejecutarSeed() {
                 descripcion: 'Bebida fría en presentación personal.', 
                 precio: 2.00, 
                 stock: 50, 
+                imagen_url: 'img/coca.webp',
                 destacado: false, 
                 categoria_id: catBebidas.id 
             }
