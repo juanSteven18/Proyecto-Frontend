@@ -1,0 +1,115 @@
+<%- include('../partials/header') %>
+
+<main class="menu-container" style="margin-top: 2rem;">
+    <h2>Gestión de Inventario y Menú (Supervisor)</h2>
+
+    <!-- Casilla de Agregar Nuevo Producto -->
+    <section class="tarjeta-pedido" style="margin-bottom: 2.5rem; border-left-color: #f97316;">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.4rem; margin-bottom: 0.5rem;">
+            ➕ Añadir Nuevo Producto
+        </h3>
+
+        <form action="/panel/productos" method="POST" class="form-login">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                <div class="campo-grupo">
+                    <label for="nombre">Nombre del platillo</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Burger Triple Queso" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="precio">Precio ($)</label>
+                    <input type="number" id="precio" name="precio" step="0.01" min="0.1" placeholder="Ej. 7.50" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="stock">Stock inicial (unidades)</label>
+                    <input type="number" id="stock" name="stock" min="0" value="20" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="categoria_id">Categoría</label>
+                    <select id="categoria_id" name="categoria_id" required style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.6rem 0.75rem; background: #f8fafc;">
+                        <option value="" disabled selected>Elige una categoría...</option>
+                        <% categorias.forEach(cat => { %>
+                            <option value="<%= cat.id %>"><%= cat.nombre %></option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+                <div class="campo-grupo">
+                    <label for="ubicacion">¿Dónde mostrar este producto?</label>
+                    <select id="ubicacion" name="ubicacion" required style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.6rem 0.75rem; background: #f8fafc; font-weight: 600;">
+                        <option value="menu">📋 Solo en el Menú General</option>
+                        <option value="destacado">⭐ En Carrusel de Destacados + Menú</option>
+                    </select>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="imagen_url">URL o ruta de imagen</label>
+                    <input type="text" id="imagen_url" name="imagen_url" placeholder="Ej. /img/ham.webp o https://...">
+                </div>
+            </div>
+
+            <div class="campo-grupo">
+                <label for="descripcion">Descripción / Ingredientes</label>
+                <textarea id="descripcion" name="descripcion" rows="2" placeholder="Describe los ingredientes principales..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-procesar" style="max-width: 260px;">
+                Guardar Producto
+            </button>
+        </form>
+    </section>
+
+    <!-- Lista de Inventario Actual -->
+    <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.5rem; margin-bottom: 1rem;">
+        Inventario Actual (<%= productos.length %> productos)
+    </h3>
+
+    <div class="tabla-wrapper">
+        <table class="tabla-historial">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Ubicación actual</th>
+                    <th>Acción rápida</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productos.forEach(prod => { %>
+                    <tr>
+                        <td><strong><%= prod.nombre %></strong></td>
+                        <td><%= prod.categoria ? prod.categoria.nombre : 'Sin categoría' %></td>
+                        <td>$<%= Number(prod.precio).toFixed(2) %></td>
+                        <td>
+                            <span class="estado-badge <%= prod.stock > 5 ? 'estado-entregado' : 'estado-cancelado' %>">
+                                <%= prod.stock %> und.
+                            </span>
+                        </td>
+                        <td>
+                            <% if (prod.destacado) { %>
+                                <span class="estado-badge estado-espera">⭐ Destacado + Menú</span>
+                            <% } else { %>
+                                <span class="estado-badge" style="background: #f1f5f9; color: #475569;">📋 Menú Normal</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <form action="/panel/productos/<%= prod.id %>/destacar" method="POST" style="margin: 0;">
+                                <button type="submit" class="filtro-btn" style="padding: 0.35rem 0.8rem; font-size: 0.8rem;">
+                                    <%= prod.destacado ? 'Quitar de Destacados' : '⭐ Hacer Destacado' %>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

@@ -1,4 +1,4 @@
-const { sequelize, Pedido, DetallePedido, Producto } = require('../models');
+const { sequelize, Pedido, DetallePedido, Producto, Categoria } = require('../models');
 const { Op } = require('sequelize');
 
 const panelController = {
@@ -8,7 +8,7 @@ const panelController = {
                 where: {
                     estado: { [Op.in]: ['espera', 'preparacion'] }
                 },
-                order: [['createdAt', 'ASC']], 
+                order: [['createdAt', 'ASC']],
                 include: [{
                     model: DetallePedido,
                     as: 'detalles',
@@ -50,7 +50,6 @@ const panelController = {
                 return res.status(404).send('Pedido no encontrado.');
             }
 
-            // Si pasa a cancelado restaura el stock de cada producto
             if (nuevoEstado === 'cancelado' && pedido.estado !== 'cancelado') {
                 for (const det of pedido.detalles) {
                     const prod = await Producto.findByPk(det.producto_id, { transaction: t });
@@ -122,6 +121,62 @@ const panelController = {
         } catch (error) {
             console.error('Error al cargar historial del supervisor:', error);
             res.status(500).send('Error al cargar el historial.');
+        }
+    },
+
+    vistaProductos: async (req, res) => {
+        try {
+            const productos = await Producto.findAll({
+                include: [{ model: Categoria, as: 'categoria' }],
+                order: [['createdAt', 'DESC']]
+            });
+            const categorias = await Categoria.findAll();
+
+            res.render('admin/productos', {
+                productos,
+                categorias,
+                usuario: req.session.usuario
+            });
+        } catch (error) {
+            console.error('Error al cargar productos:', error);
+            res.status(500).send('Error al cargar la gestión de productos.');
+        }
+    },
+
+    crearProducto: async (req, res) => {
+        try {
+            const { nombre, descripcion, precio, stock, imagen_url, categoria_id, ubicacion } = req.body;
+            const esDestacado = ubicacion === 'destacado';
+
+            await Producto.create({
+                nombre: nombre.trim(),
+                descripcion: descripcion.trim(),
+                precio: parseFloat(precio),
+                stock: parseInt(stock, 10) || 0,
+                imagen_url: imagen_url && imagen_url.trim() !== '' ? imagen_url.trim() : '/img/ham.webp',
+                categoria_id: parseInt(categoria_id, 10),
+                destacado: esDestacado
+            });
+
+            res.redirect('/panel/productos');
+        } catch (error) {
+            console.error('Error al crear producto:', error);
+            res.status(500).send('No se pudo registrar el producto.');
+        }
+    },
+
+    alternarDestacado: async (req, res) => {
+        try {
+            const producto = await Producto.findByPk(req.params.id);
+            if (!producto) {
+                return res.status(404).send('Producto no encontrado.');
+            }
+            producto.destacado = !producto.destacado;
+            await producto.save();
+            res.redirect('/panel/productos');
+        } catch (error) {
+            console.error('Error al cambiar estado destacado:', error);
+            res.status(500).send('Error al actualizar el producto.');
         }
     }
 };

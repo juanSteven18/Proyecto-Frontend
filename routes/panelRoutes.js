@@ -7,4 +7,9 @@ router.get('/cola', requiereLogin, requiereRol('empleado', 'supervisor'), panelC
 router.post('/pedidos/:id/estado', requiereLogin, requiereRol('empleado', 'supervisor'), panelController.cambiarEstadoPedido);
 router.get('/historial', requiereLogin, requiereRol('supervisor'), panelController.historialSupervisor);
 
+// --- NUEVAS RUTAS SOLO PARA SUPERVISOR ---
+router.get('/productos', requiereLogin, requiereRol('supervisor'), panelController.vistaProductos);
+router.post('/productos', requiereLogin, requiereRol('supervisor'), panelController.crearProducto);
+router.post('/productos/:id/destacar', requiereLogin, requiereRol('supervisor'), panelController.alternarDestacado);
+
 module.exports = router;
