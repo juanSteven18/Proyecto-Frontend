@@ -1,0 +1,42 @@
+<!-- Footer Principal -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Bite&Go — Sistema Automatizado de Pedidos e Inventario.</p>
+            <p><small>Cátedra de Front End • Escuela de Ingeniería de Sistemas • Universidad Valle del Momboy</small></p>
+        </div>
+    </footer>
+
+    <!-- Script global de interaccion del cliente -->
+    <script src="/js/cart.js"></script>
+
+    <!-- Controlador de Modo Claro / Oscuro -->
+    <script>
+        (function() {
+            const btnTema = document.getElementById('btn-tema');
+            const root = document.documentElement;
+
+            function actualizarIcono() {
+                if (!btnTema) return;
+                const esOscuro = root.getAttribute('data-theme') === 'dark';
+                btnTema.textContent = esOscuro ? '☀️' : '🌙';
+            }
+
+            actualizarIcono();
+
+            if (btnTema) {
+                btnTema.addEventListener('click', () => {
+                    const esOscuro = root.getAttribute('data-theme') === 'dark';
+                    if (esOscuro) {
+                        root.removeAttribute('data-theme');
+                        localStorage.setItem('bitego-tema', 'light');
+                    } else {
+                        root.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('bitego-tema', 'dark');
+                    }
+                    actualizarIcono();
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
